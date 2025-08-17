@@ -1,34 +1,52 @@
 import java.io.File;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Calculator {
 
     public static void main(String[] args) throws Exception {
         File path = new File("input.txt");
-
+        File path2 = new File("output.txt");
+        PrintWriter pw = new PrintWriter(path2);
         Scanner sc = new Scanner(path);
-        String input = sc.nextLine();
-        String[] nums = input.split(" ");
+        List<String> input = new ArrayList<>();
 
-        try {
-            double a = Double.parseDouble(nums[0]);
-            double b = Double.parseDouble(nums[2]);
-        } catch (NumberFormatException e) {
-            System.out.println("Error! Not number");
-            return;
+        while (sc.hasNext()) {
+            input.add(sc.nextLine());
         }
 
-        if(!nums[1].equals("/") && !nums[1].equals("*") && !nums[1].equals("+") && !nums[1].equals("-")){
-            throw new Exception("Operation Error!");
-        }
+        for(int i = 0; i < input.size(); i++) {
+            String[] nums = input.get(i).split(" ");
 
-        if(nums[1].equals("/") && Double.parseDouble(nums[2]) == 0.0 ){
-            throw new Exception("Error! Division by zero");
-        }
 
-        double result = arithmetic(nums[1],Double.parseDouble(nums[0]),Double.parseDouble(nums[2]));
-        result = Math.round(result * 10.0) / 10.0;
-        System.out.println(result);
+
+            try {
+                double a = Double.parseDouble(nums[0]);
+                double b = Double.parseDouble(nums[2]);
+            } catch (NumberFormatException e) {
+                pw.println(input.get(i) + " = " + "Error! Not number");
+                continue;
+            }
+            if (!nums[1].equals("/") && !nums[1].equals("*") && !nums[1].equals("+") && !nums[1].equals("-")) {
+                pw.println(input.get(i) + " = " + "Operation Error!");
+                continue;
+            }
+
+            if (nums[1].equals("/") && Double.parseDouble(nums[2]) == 0.0) {
+                pw.println(input.get(i) + " = " + "Error! Division by zero");
+                continue;
+            }
+
+            double result = arithmetic(nums[1], Double.parseDouble(nums[0]), Double.parseDouble(nums[2]));
+            result = Math.round(result * 10.0) / 10.0;
+            pw.println(input.get(i) + " = " +     String.valueOf(result));
+
+        }
+        pw.close();
+        sc.close();
+
     }
 
     static double arithmetic(String operation, double num1, double num2) throws Exception {
